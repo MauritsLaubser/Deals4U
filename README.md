@@ -28,6 +28,6 @@ Other scripts: `npm run build`, `npm test`, `npm run lint`, `npm run format`.
 
 - `src/data.ts` – fixes, upgrades and tycoon buildings (tune the pacing here)
 - `src/state.ts` – game state, reducer, save/load (covered by `state.test.ts`)
-- `src/annoyances/` – one component per annoyance
+- `src/pests/` – one component per annoyance (named so ad blockers leave them alone)
 - `src/Shop.tsx` – the Website Repair Kit sidebar
 - `src/GameFrame.tsx`, `src/Tycoon.tsx` – the game at the bottom of the page
