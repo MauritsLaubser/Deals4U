@@ -2,20 +2,28 @@ import { useEffect, useState } from 'react'
 import {
   BUILDINGS,
   CLICK_UPGRADE_MAX,
+  ESCAPE_MAX_DELAY,
+  ESCAPE_MIN_DELAY,
+  ESCAPE_WINDOW_SECONDS,
   SPONSOR_BOOST_MULTIPLIER,
   SPONSOR_BOOST_SECONDS,
   TYCOON_GOAL,
   UPGRADE_NAMES,
+  VIRAL_CLICK_MULTIPLIER,
+  VIRAL_INCOME_MULTIPLIER,
+  VIRAL_SECONDS,
   buildingCost,
   clickUpgradeCost,
 } from './data'
 import { formatNumber } from './format'
 import { useGame } from './GameProvider'
+import { pick } from './useRecurring'
 import {
   buildingIncome,
   nextBuildingUpgrade,
   tycoonClickValue,
   tycoonPerSecond,
+  visitorBounty,
 } from './state'
 
 const HEADLINES = [
@@ -61,6 +69,145 @@ function Sponsor() {
     >
       💰 Sponsored!
     </button>
+  )
+}
+
+const FACES = ['🧑', '👩', '👴', '🧒', '🧔', '👵', '👨‍💻', '🧑‍🦰']
+
+// Fixed, scattered seats for the visitors browsing your site.
+const seat = (i: number) => ({
+  x: 6 + ((i * 37) % 82),
+  y: 18 + ((i * 53) % 62),
+})
+
+type Escapee = { id: number; x: number; y: number; face: string }
+let escapeeId = 0
+
+// Visitors browse your site. Every so often one makes a run for the ✕:
+// catch them before they get there for a bounty. The tables have turned.
+function YourSite() {
+  const { state, dispatch, float } = useGame()
+  const tycoon = state.tycoon
+  const ownedTotal = tycoon.owned.reduce((a, b) => a + b, 0)
+  const crowd =
+    ownedTotal === 0 ? 0 : Math.min(10, 1 + Math.floor(ownedTotal / 6))
+  const [escapee, setEscapee] = useState<Escapee | null>(null)
+  const [escaped, setEscaped] = useState(false)
+
+  useEffect(() => {
+    if (crowd === 0) return
+    if (escapee) {
+      const timer = setTimeout(() => {
+        setEscapee(null)
+        setEscaped(true)
+      }, ESCAPE_WINDOW_SECONDS * 1000)
+      return () => clearTimeout(timer)
+    }
+    const delay =
+      ESCAPE_MIN_DELAY + Math.random() * (ESCAPE_MAX_DELAY - ESCAPE_MIN_DELAY)
+    const timer = setTimeout(() => {
+      const spot = seat(Math.floor(Math.random() * 20))
+      setEscaped(false)
+      setEscapee({ id: ++escapeeId, ...spot, face: pick(FACES) })
+    }, delay * 1000)
+    return () => clearTimeout(timer)
+  }, [crowd, escapee])
+
+  useEffect(() => {
+    if (!escaped) return
+    const timer = setTimeout(() => setEscaped(false), 2500)
+    return () => clearTimeout(timer)
+  }, [escaped])
+
+  return (
+    <div className="mini-site" aria-label="Your website">
+      <div className="mini-site-bar">
+        <span>🔒 your-site.biz</span>
+        <span className="mini-site-stats">
+          {tycoon.caught > 0 && `${tycoon.caught} trapped · `}
+          <span className="mini-site-x" aria-hidden>
+            ✕
+          </span>
+        </span>
+      </div>
+      <div className="mini-site-body">
+        {ownedTotal === 0 ? (
+          <span className="mini-site-empty">
+            A clean, empty website. Disgusting. No visitors yet.
+          </span>
+        ) : (
+          BUILDINGS.map((b, i) =>
+            Array.from({ length: Math.min(tycoon.owned[i], 30) }, (_, n) => (
+              <span key={`${i}-${n}`} className="mini-site-thing">
+                {b.icon}
+              </span>
+            )),
+          )
+        )}
+        {Array.from({ length: crowd }, (_, i) => (
+          <span
+            key={i}
+            className="visitor"
+            style={{ left: `${seat(i).x}%`, top: `${seat(i).y}%` }}
+            aria-hidden
+          >
+            {FACES[i % FACES.length]}
+          </span>
+        ))}
+        {escapee && (
+          <button
+            key={escapee.id}
+            className="escapee"
+            style={
+              {
+                '--x': `${escapee.x}%`,
+                '--y': `${escapee.y}%`,
+                '--window': `${ESCAPE_WINDOW_SECONDS}s`,
+              } as React.CSSProperties
+            }
+            onClick={(e) => {
+              float(
+                `WAIT! DON'T GO! +$${formatNumber(visitorBounty(tycoon))}`,
+                e,
+              )
+              dispatch({ type: 'catchVisitor' })
+              setEscapee(null)
+            }}
+            aria-label="Catch the escaping visitor"
+          >
+            🏃{escapee.face}
+          </button>
+        )}
+        {escaped && <span className="escaped-note">👋 A visitor escaped!</span>}
+      </div>
+      {crowd > 0 && (
+        <div className="mini-site-hint">
+          Visitors sometimes run for the ✕. Click them before they escape!
+        </div>
+      )}
+    </div>
+  )
+}
+
+function HypeMeter() {
+  const { state } = useGame()
+  const { hype, viralLeft } = state.tycoon
+  const viral = viralLeft > 0
+  return (
+    <div className={`hype ${viral ? 'viral' : ''}`}>
+      <div className="hype-label">
+        {viral
+          ? `🚀 VIRAL! ×${VIRAL_CLICK_MULTIPLIER} clicks · ×${VIRAL_INCOME_MULTIPLIER} income · ${Math.ceil(viralLeft)}s`
+          : `🔥 Hype ${Math.floor(hype * 100)}% · keep publishing to go viral`}
+      </div>
+      <div className="bar hype-bar">
+        <div
+          style={{
+            width: `${(viral ? viralLeft / VIRAL_SECONDS : hype) * 100}%`,
+          }}
+        />
+      </div>
+    </div>
   )
 }
 
@@ -145,7 +292,7 @@ export function Tycoon() {
       <div className="tycoon-body">
         <div className="tycoon-left">
           <button
-            className="clickbait"
+            className={`clickbait ${tycoon.viralLeft > 0 ? 'viral' : ''}`}
             onClick={(e) => {
               dispatch({ type: 'tycoonClick' })
               float(`+$${formatNumber(clickValue)}`, e)
@@ -172,23 +319,8 @@ export function Tycoon() {
               : `✍️ ALL CAPS HEADLINES lv ${tycoon.clickLevel + 1} · $${formatNumber(clickCost)}`}
           </button>
 
-          <div className="mini-site" aria-label="Your website">
-            <div className="mini-site-bar">🔒 your-site.biz</div>
-            <div className="mini-site-body">
-              {tycoon.owned.every((n) => n === 0) ? (
-                <span className="mini-site-empty">
-                  A clean, empty website. Disgusting.
-                </span>
-              ) : (
-                BUILDINGS.map((b, i) =>
-                  Array.from(
-                    { length: Math.min(tycoon.owned[i], 30) },
-                    (_, n) => <span key={`${i}-${n}`}>{b.icon}</span>,
-                  ),
-                )
-              )}
-            </div>
-          </div>
+          <HypeMeter />
+          <YourSite />
         </div>
 
         <div className="tycoon-buildings">
@@ -230,6 +362,12 @@ export function Tycoon() {
                     <span className="building-cost">${formatNumber(cost)}</span>
                   </span>
                 </button>
+                {upgrade && !upgrade.unlocked && owned > 0 && (
+                  <div className="upgrade-chip locked">
+                    🔒 {UPGRADE_NAMES[upgrade.level]} ×2 unlocks at{' '}
+                    {upgrade.requires} owned ({owned}/{upgrade.requires})
+                  </div>
+                )}
                 {upgrade?.unlocked && (
                   <button
                     className="upgrade-chip"

@@ -2,8 +2,13 @@ import {
   BREATH_PER_LEVEL,
   BUILDINGS,
   CLICK_UPGRADE_MAX,
+  ESCAPE_BOUNTY_MIN,
+  ESCAPE_BOUNTY_SECONDS,
   FIXES,
   FIX_MULTIPLIER,
+  HYPE_DRAIN_DELAY,
+  HYPE_DRAIN_PER_SECOND,
+  HYPE_PER_CLICK,
   INTERN_AUTO_WEIGHT,
   LEVEL_UPGRADES,
   SEED_MONEY_CAP,
@@ -12,6 +17,9 @@ import {
   TYCOON_GOAL,
   UPGRADE_COST_FACTORS,
   UPGRADE_THRESHOLDS,
+  VIRAL_CLICK_MULTIPLIER,
+  VIRAL_INCOME_MULTIPLIER,
+  VIRAL_SECONDS,
   buildingCost,
   clickUpgradeCost,
   levelCost,
@@ -26,6 +34,11 @@ export type TycoonState = {
   upgrades: number[]
   clickLevel: number
   boostLeft: number
+  // 0..1, fills as you click; going viral empties it.
+  hype: number
+  sinceLastClick: number
+  viralLeft: number
+  caught: number
   won: boolean
 }
 
@@ -52,6 +65,7 @@ export type Action =
   | { type: 'buyBuildingUpgrade'; index: number }
   | { type: 'buyClickUpgrade' }
   | { type: 'sponsorBoost' }
+  | { type: 'catchVisitor' }
   | { type: 'newGamePlus' }
   | { type: 'reset' }
 
@@ -62,6 +76,10 @@ export const initialTycoon = (): TycoonState => ({
   upgrades: BUILDINGS.map(() => 0),
   clickLevel: 0,
   boostLeft: 0,
+  hype: 0,
+  sinceLastClick: 0,
+  viralLeft: 0,
+  caught: 0,
   won: false,
 })
 
@@ -103,12 +121,19 @@ export const tycoonPerSecond = (tycoon: TycoonState) =>
   BUILDINGS.reduce(
     (sum, _, i) => sum + buildingIncome(tycoon, i) * tycoon.owned[i],
     0,
-  ) * (tycoon.boostLeft > 0 ? SPONSOR_BOOST_MULTIPLIER : 1)
+  ) *
+  (tycoon.boostLeft > 0 ? SPONSOR_BOOST_MULTIPLIER : 1) *
+  (tycoon.viralLeft > 0 ? VIRAL_INCOME_MULTIPLIER : 1)
 
 // A click is worth more with each click upgrade, plus a slice of your income.
 export const tycoonClickValue = (tycoon: TycoonState) =>
-  (1 + tycoon.clickLevel) * 2 ** tycoon.clickLevel +
-  tycoonPerSecond(tycoon) * 0.02 * tycoon.clickLevel
+  (1 +
+    2 * tycoon.clickLevel +
+    tycoonPerSecond(tycoon) * 0.01 * tycoon.clickLevel) *
+  (tycoon.viralLeft > 0 ? VIRAL_CLICK_MULTIPLIER : 1)
+
+export const visitorBounty = (tycoon: TycoonState) =>
+  Math.max(ESCAPE_BOUNTY_MIN, tycoonPerSecond(tycoon) * ESCAPE_BOUNTY_SECONDS)
 
 export const nextBuildingUpgrade = (tycoon: TycoonState, index: number) => {
   const level = tycoon.upgrades[index]
@@ -160,11 +185,19 @@ export function reducer(state: GameState, action: Action): GameState {
           state.tycoon,
           tycoonPerSecond(state.tycoon) * action.dt,
         )
+        const sinceLastClick = tycoon.sinceLastClick + action.dt
+        const drain =
+          sinceLastClick > HYPE_DRAIN_DELAY
+            ? HYPE_DRAIN_PER_SECOND * action.dt
+            : 0
         next = {
           ...next,
           tycoon: {
             ...tycoon,
             boostLeft: Math.max(0, tycoon.boostLeft - action.dt),
+            viralLeft: Math.max(0, tycoon.viralLeft - action.dt),
+            hype: Math.max(0, tycoon.hype - drain),
+            sinceLastClick,
           },
         }
       }
@@ -216,10 +249,24 @@ export function reducer(state: GameState, action: Action): GameState {
     }
     case 'tycoonClick': {
       if (!isCleaned(state)) return state
+      const tycoon = earnTycoon(state.tycoon, tycoonClickValue(state.tycoon))
+      // No hype builds up while you're already viral.
+      const hype = tycoon.viralLeft > 0 ? 0 : tycoon.hype + HYPE_PER_CLICK
+      const viral = hype >= 1
       return {
         ...state,
-        tycoon: earnTycoon(state.tycoon, tycoonClickValue(state.tycoon)),
+        tycoon: {
+          ...tycoon,
+          hype: viral ? 0 : hype,
+          viralLeft: viral ? VIRAL_SECONDS : tycoon.viralLeft,
+          sinceLastClick: 0,
+        },
       }
+    }
+    case 'catchVisitor': {
+      if (!isCleaned(state)) return state
+      const tycoon = earnTycoon(state.tycoon, visitorBounty(state.tycoon))
+      return { ...state, tycoon: { ...tycoon, caught: tycoon.caught + 1 } }
     }
     case 'buyBuilding': {
       const building = BUILDINGS[action.index]

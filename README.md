@@ -10,6 +10,11 @@ one by one. Once the site is fully repaired, the game at the bottom finally
 loads: **Webmaster Tycoon**, an incremental game about building the most
 annoying website on the internet.
 
+In Webmaster Tycoon, publishing clickbait builds **hype**; fill the meter to go
+viral for a while (bigger clicks and income). Visitors browse your site and
+sometimes make a run for the ✕; click them before they escape for a bounty.
+Sponsors pop up now and then for a short income boost.
+
 ## Running it
 
 ```sh

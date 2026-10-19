@@ -182,7 +182,7 @@ export const BUILDINGS: Building[] = [
     name: 'Blinking Banner',
     icon: '🌈',
     description: 'CLICK HERE!!! It blinks. Visitors look. You get paid.',
-    baseCost: 15,
+    baseCost: 22,
     income: 0.5,
   },
   {
@@ -190,49 +190,49 @@ export const BUILDINGS: Building[] = [
     icon: '🍪',
     description:
       '"Accept all" is big and green. "Reject" is a tiny grey rumour.',
-    baseCost: 100,
+    baseCost: 150,
     income: 4,
   },
   {
     name: 'Newsletter Modal',
     icon: '📧',
     description: '"No thanks, I hate saving money."',
-    baseCost: 800,
+    baseCost: 1200,
     income: 25,
   },
   {
     name: 'Autoplay Video',
     icon: '📺',
     description: 'Follows the visitor around the page. At full volume.',
-    baseCost: 6000,
+    baseCost: 9000,
     income: 150,
   },
   {
     name: 'Chatbot',
     icon: '🤖',
     description: '"It looks like you\'re trying to leave. Can I help?"',
-    baseCost: 45000,
+    baseCost: 70000,
     income: 900,
   },
   {
     name: 'Impossible CAPTCHA',
     icon: '🚦',
     description: 'Is the pole of the traffic light part of the traffic light?',
-    baseCost: 350000,
+    baseCost: 525000,
     income: 5500,
   },
   {
     name: 'Paywall',
     icon: '💸',
     description: '"You have read 0 of 0 free articles this month."',
-    baseCost: 3e6,
+    baseCost: 4.5e6,
     income: 35000,
   },
   {
     name: 'Recipe Life Story',
     icon: '📜',
     description: 'Before the recipe: 40,000 words about a summer in Tuscany.',
-    baseCost: 25e6,
+    baseCost: 37.5e6,
     income: 220000,
   },
 ]
@@ -242,9 +242,9 @@ export const buildingCost = (building: Building, owned: number) =>
   Math.ceil(building.baseCost * BUILDING_GROWTH ** owned)
 
 // Each building gets ×2 upgrades once you own this many of it...
-export const UPGRADE_THRESHOLDS = [1, 5, 25, 50]
+export const UPGRADE_THRESHOLDS = [10, 25, 50, 100]
 // ...costing this many times the building's base cost.
-export const UPGRADE_COST_FACTORS = [10, 50, 500, 5000]
+export const UPGRADE_COST_FACTORS = [25, 150, 1500, 15000]
 export const UPGRADE_NAMES = [
   'More Blinking',
   'Bigger Font',
@@ -252,11 +252,28 @@ export const UPGRADE_NAMES = [
   'Legally Questionable',
 ]
 
-export const clickUpgradeCost = (level: number) => 50 * 8 ** level
+export const clickUpgradeCost = (level: number) => 25 * 10 ** level
 export const CLICK_UPGRADE_MAX = 8
 
 export const TYCOON_GOAL = 1e9
 // Leftover patience carries over into the tycoon game, up to this much.
-export const SEED_MONEY_CAP = 100
-export const SPONSOR_BOOST_SECONDS = 30
-export const SPONSOR_BOOST_MULTIPLIER = 5
+export const SEED_MONEY_CAP = 25
+export const SPONSOR_BOOST_SECONDS = 15
+export const SPONSOR_BOOST_MULTIPLIER = 2
+
+// Hype: every click fills the meter a little. When it's full you go viral
+// for a while. It drains if you stop clicking.
+export const HYPE_PER_CLICK = 0.012
+export const HYPE_DRAIN_DELAY = 2
+export const HYPE_DRAIN_PER_SECOND = 0.1
+export const VIRAL_SECONDS = 10
+export const VIRAL_CLICK_MULTIPLIER = 3
+export const VIRAL_INCOME_MULTIPLIER = 1.5
+
+// Escaping visitors: catch one before they reach the ✕ for a bounty worth
+// this many seconds of income.
+export const ESCAPE_BOUNTY_SECONDS = 8
+export const ESCAPE_BOUNTY_MIN = 15
+export const ESCAPE_WINDOW_SECONDS = 4
+export const ESCAPE_MIN_DELAY = 25
+export const ESCAPE_MAX_DELAY = 55
