@@ -162,7 +162,7 @@ export const levelCost = (upgrade: LevelUpgrade, level: number) =>
   Math.ceil(upgrade.baseCost * upgrade.growth ** level)
 
 // Every fix calms you down a bit more, multiplying all patience gains.
-export const FIX_MULTIPLIER = 1.3
+export const FIX_MULTIPLIER = 1.5
 export const BREATH_PER_LEVEL = 0.75
 export const INTERN_AUTO_WEIGHT = 0.5
 export const internInterval = (level: number) => 7 / level

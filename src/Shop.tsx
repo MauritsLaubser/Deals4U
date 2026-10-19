@@ -1,5 +1,11 @@
 import { useState } from 'react'
-import { FIXES, LEVEL_UPGRADES, SEED_MONEY_CAP, levelCost } from './data'
+import {
+  FIXES,
+  FIX_MULTIPLIER,
+  LEVEL_UPGRADES,
+  SEED_MONEY_CAP,
+  levelCost,
+} from './data'
 import { formatDuration, formatNumber } from './format'
 import { useGame } from './GameProvider'
 import {
@@ -110,27 +116,6 @@ export function Shop() {
               </div>
             </div>
 
-            <h3 className="shop-section">Fixes</h3>
-            <p className="shop-hint">Each fix also makes you ×1.3 calmer.</p>
-            {remaining.map((fix) => {
-              const affordable = state.patience >= fix.cost
-              return (
-                <button
-                  key={fix.id}
-                  className={`shop-item ${affordable ? 'affordable' : ''}`}
-                  disabled={!affordable}
-                  onClick={() => dispatch({ type: 'buyFix', id: fix.id })}
-                >
-                  <span className="shop-icon">{fix.icon}</span>
-                  <span className="shop-text">
-                    <span className="shop-name">{fix.name}</span>
-                    <span className="shop-desc">{fix.description}</span>
-                  </span>
-                  <span className="shop-cost">🧘 {formatNumber(fix.cost)}</span>
-                </button>
-              )
-            })}
-
             <h3 className="shop-section">Coping mechanisms</h3>
             {LEVEL_UPGRADES.map((upgrade) => {
               const level = state.levels[upgrade.id]
@@ -162,6 +147,29 @@ export function Shop() {
                   <span className="shop-cost">
                     {maxed ? 'MAX' : `🧘 ${formatNumber(cost)}`}
                   </span>
+                </button>
+              )
+            })}
+
+            <h3 className="shop-section">Fixes</h3>
+            <p className="shop-hint">
+              Each fix also makes you ×{FIX_MULTIPLIER} calmer.
+            </p>
+            {remaining.map((fix) => {
+              const affordable = state.patience >= fix.cost
+              return (
+                <button
+                  key={fix.id}
+                  className={`shop-item ${affordable ? 'affordable' : ''}`}
+                  disabled={!affordable}
+                  onClick={() => dispatch({ type: 'buyFix', id: fix.id })}
+                >
+                  <span className="shop-icon">{fix.icon}</span>
+                  <span className="shop-text">
+                    <span className="shop-name">{fix.name}</span>
+                    <span className="shop-desc">{fix.description}</span>
+                  </span>
+                  <span className="shop-cost">🧘 {formatNumber(fix.cost)}</span>
                 </button>
               )
             })}

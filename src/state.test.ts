@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { BUILDINGS, FIXES, SEED_MONEY_CAP, TYCOON_GOAL } from './data'
+import {
+  BUILDINGS,
+  FIXES,
+  FIX_MULTIPLIER,
+  SEED_MONEY_CAP,
+  TYCOON_GOAL,
+} from './data'
 import {
   dismissReward,
   initialState,
@@ -36,7 +42,7 @@ describe('annoying website reducer', () => {
     const state = reducer(withPatience(100), { type: 'buyFix', id: 'cookie' })
     expect(state.fixed).toEqual(['cookie'])
     expect(state.patience).toBe(85)
-    expect(patienceMultiplier(state)).toBeCloseTo(1.3)
+    expect(patienceMultiplier(state)).toBe(FIX_MULTIPLIER)
   })
 
   it('cannot buy the same fix twice', () => {
