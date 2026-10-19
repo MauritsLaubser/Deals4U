@@ -42,7 +42,11 @@ export function Newsletter() {
 
   return (
     <div className="modal-backdrop">
-      <div className="modal newsletter" role="dialog" aria-label="Newsletter">
+      <div
+        className="modal subscribe-box"
+        role="dialog"
+        aria-label="Newsletter"
+      >
         {canClose && (
           <button
             className="modal-x"
@@ -52,7 +56,7 @@ export function Newsletter() {
             ✕
           </button>
         )}
-        <div className="newsletter-emoji">📬</div>
+        <div className="big-emoji">📬</div>
         <h2>WAIT! Before you see anything!</h2>
         <p>
           Join <strong>2,000,000</strong> deal hunters and get our newsletter

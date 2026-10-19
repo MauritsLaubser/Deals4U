@@ -40,35 +40,35 @@ export function CookieBanner() {
   }
 
   return (
-    <div className="cookie-banner" role="dialog" aria-label="Cookie consent">
-      <div className="cookie-text">
+    <div className="consent-banner" role="dialog" aria-label="Cookie consent">
+      <div className="consent-text">
         <strong>🍪 We value your privacy!!</strong> That's why we and our 4,182
         partners use cookies to track, store, sell, and lovingly remember
         everything you do. By existing near this website you agree.
       </div>
       {manage && (
-        <div className="cookie-manage">
+        <div className="consent-manage">
           {VENDORS.map((vendor) => (
             <label key={vendor}>
               <input type="checkbox" defaultChecked disabled /> {vendor}
             </label>
           ))}
-          <p className="cookie-small">
+          <p className="consent-small">
             (These cannot be turned off. We just like showing you the list.)
           </p>
         </div>
       )}
-      <div className="cookie-actions">
-        <button className="cookie-accept" onClick={(e) => close(3, e)}>
+      <div className="consent-actions">
+        <button className="consent-accept" onClick={(e) => close(3, e)}>
           ACCEPT ALL 🍪
         </button>
         {manage ? (
-          <button className="cookie-manage-btn" onClick={(e) => close(5, e)}>
+          <button className="consent-manage-btn" onClick={(e) => close(5, e)}>
             Save my (non-)choices
           </button>
         ) : (
           <button
-            className="cookie-manage-btn"
+            className="consent-manage-btn"
             onClick={(e) => {
               setManage(true)
               float('Ooh, choices!', e)
@@ -78,7 +78,7 @@ export function CookieBanner() {
           </button>
         )}
         <button
-          className="cookie-reject"
+          className="consent-reject"
           style={{ transform: `translate(${rejectPos.x}px, ${rejectPos.y}px)` }}
           onMouseEnter={dodge}
           onClick={(e) => close(4, e)}

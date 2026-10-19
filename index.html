@@ -8,6 +8,54 @@
   </head>
   <body>
     <div id="app"></div>
+    <script>
+      // If the game fails to start, say why on the page instead of leaving
+      // it blank. Plain script on purpose, so it runs even if the game can't.
+      ;(function () {
+        var problems = []
+        function show() {
+          var app = document.getElementById('app')
+          if (!app || app.childElementCount > 0) return
+          app.innerHTML =
+            '<div style="font:16px/1.5 system-ui,sans-serif;max-width:640px;margin:48px auto;padding:0 16px;color:#222">' +
+            '<h1 style="font-size:22px">The game didn’t start</h1>' +
+            '<p>Your browser stopped it before it could load. If you use an ad or content blocker, try turning it off for this page and reload.</p>' +
+            '<p>What the browser reported:</p>' +
+            '<pre style="white-space:pre-wrap;background:#f3f3f3;padding:12px;border-radius:8px"></pre>' +
+            '</div>'
+          app.querySelector('pre').textContent = problems.length
+            ? problems.join('\n')
+            : 'No error message. The game script never ran (blocked or not loaded).'
+        }
+        window.addEventListener(
+          'error',
+          function (event) {
+            var target = event.target
+            if (target && target.tagName === 'SCRIPT') {
+              problems.push('Could not load script: ' + target.src)
+            } else if (target && target.tagName === 'LINK') {
+              problems.push('Could not load stylesheet: ' + target.href)
+            } else {
+              problems.push(
+                event.message +
+                  (event.filename
+                    ? ' (' + event.filename + ':' + event.lineno + ')'
+                    : ''),
+              )
+            }
+            setTimeout(show, 500)
+          },
+          true,
+        )
+        window.addEventListener('unhandledrejection', function (event) {
+          problems.push(
+            String(event.reason && (event.reason.stack || event.reason)),
+          )
+          setTimeout(show, 500)
+        })
+        setTimeout(show, 6000)
+      })()
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

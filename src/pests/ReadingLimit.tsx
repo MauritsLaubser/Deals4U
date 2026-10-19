@@ -9,16 +9,16 @@ export function Paywall() {
   if (!visible) return null
 
   return (
-    <div className="paywall" role="dialog" aria-label="Paywall">
-      <div className="paywall-card">
+    <div className="limit-sheet" role="dialog" aria-label="Paywall">
+      <div className="limit-card">
         <h2>You've read 3 of 3 free articles this month.</h2>
         <p>
           (This is your first visit. The math checks out, trust us.) Subscribe
           to DEALS4U PREMIUM for unlimited scrolling!
         </p>
-        <div className="paywall-actions">
+        <div className="limit-actions">
           <button
-            className="paywall-subscribe"
+            className="limit-subscribe"
             onClick={(e) => float('Card declined. Thank goodness.', e)}
           >
             Subscribe · $49.99/week

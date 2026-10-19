@@ -167,32 +167,32 @@ export function Popups() {
       {popups.map((popup) => (
         <div
           key={popup.id}
-          className="popup"
+          className="win98"
           style={{ left: popup.x, top: popup.y, width: POPUP_WIDTH }}
           role="dialog"
           aria-label={popup.ad.title}
         >
-          <div className="popup-titlebar">
+          <div className="win98-titlebar">
             <span>{popup.ad.title}</span>
             <button
-              className="popup-x"
+              className="win98-x"
               aria-label="Close"
               onClick={(e) => close(popup, e)}
             >
               ✕
             </button>
           </div>
-          <div className="popup-body" style={{ background: popup.ad.color }}>
+          <div className="win98-body" style={{ background: popup.ad.color }}>
             {popup.fakeX && (
               <button
-                className="popup-fake-x"
+                className="win98-fake-x"
                 onClick={(e) => fakeClose(popup, e)}
               >
                 ✕ CLOSE
               </button>
             )}
             <p>{popup.ad.body}</p>
-            <button className="popup-cta" onClick={(e) => fakeClose(popup, e)}>
+            <button className="win98-cta" onClick={(e) => fakeClose(popup, e)}>
               CLICK HERE ▶
             </button>
           </div>

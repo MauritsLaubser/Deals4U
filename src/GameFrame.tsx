@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { spawnPopupAd } from './annoyances/Popups'
+import { spawnPopupAd } from './pests/Windows98'
 import { FIXES } from './data'
 import { useGame } from './GameProvider'
 import { isCleaned, isFixed } from './state'
@@ -19,10 +19,10 @@ function AdblockWall() {
   const [shake, setShake] = useState(false)
   return (
     <div
-      className={`adblock-wall ${shake ? 'shake' : ''}`}
+      className={`vibes-wall ${shake ? 'shake' : ''}`}
       onAnimationEnd={() => setShake(false)}
     >
-      <div className="newsletter-emoji">😡</div>
+      <div className="big-emoji">😡</div>
       <h3>AdBlock Detected!</h3>
       <p>
         We noticed you're using an ad blocker. (You might not be. We check by

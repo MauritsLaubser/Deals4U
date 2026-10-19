@@ -1,14 +1,14 @@
 import { useEffect, useRef } from 'react'
-import { Captcha } from './annoyances/Captcha'
-import { Chatbot } from './annoyances/Chatbot'
-import { CookieBanner } from './annoyances/CookieBanner'
-import { CursorTrail } from './annoyances/CursorTrail'
-import { ExitIntent } from './annoyances/ExitIntent'
-import { Newsletter } from './annoyances/Newsletter'
-import { Notifications } from './annoyances/Notifications'
-import { Paywall } from './annoyances/Paywall'
-import { Popups } from './annoyances/Popups'
-import { VideoAd } from './annoyances/VideoAd'
+import { Captcha } from './pests/HumanCheck'
+import { Chatbot } from './pests/Botty'
+import { CookieBanner } from './pests/Consent'
+import { CursorTrail } from './pests/Glitter'
+import { ExitIntent } from './pests/Goodbye'
+import { Newsletter } from './pests/Subscribe'
+import { Notifications } from './pests/Permission'
+import { Paywall } from './pests/ReadingLimit'
+import { Popups } from './pests/Windows98'
+import { VideoAd } from './pests/Autoplay'
 import { GameFrame } from './GameFrame'
 import { useGame } from './GameProvider'
 import { scrollToGame, Shop } from './Shop'
@@ -60,7 +60,7 @@ function SponsoredBox({ index }: { index: number }) {
     '🧦 SPONSORED: Socks that remember you.',
     '🍕 SPONSORED: Pineapple pizza. Nonna Pixel approved.',
   ]
-  return <div className="sponsored-box">{ads[index % ads.length]}</div>
+  return <div className="nonna-box">{ads[index % ads.length]}</div>
 }
 
 export function Site() {
@@ -87,7 +87,7 @@ export function Site() {
       <main className="site-main">
         <article id="story" className="article">
           {cleaned && (
-            <div className="cleaned-banner">
+            <div className="cleaned-note">
               ✨ This website no longer sucks. Thank you for your patience. ✨
             </div>
           )}

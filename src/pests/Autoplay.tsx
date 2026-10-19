@@ -30,23 +30,23 @@ export function VideoAd() {
   if (!visible) return null
 
   return (
-    <div className="video-ad" role="complementary" aria-label="Video ad">
-      <div className="video-screen">
-        <div className="video-slogan">🔊 {slogan} 🔊</div>
-        <div className="video-progress">
+    <div className="vid-box" role="complementary" aria-label="Autoplay video">
+      <div className="vid-screen">
+        <div className="vid-slogan">🔊 {slogan} 🔊</div>
+        <div className="vid-progress">
           <div style={{ width: `${(5 - countdown) * 20}%` }} />
         </div>
       </div>
-      <div className="video-controls">
+      <div className="vid-controls">
         <button onClick={(e) => float('Muting is a Premium feature 👑', e)}>
           🔇
         </button>
         <span>Ad · 1 of 7</span>
         {countdown > 0 ? (
-          <span className="video-skip waiting">Skip in {countdown}</span>
+          <span className="vid-skip waiting">Skip in {countdown}</span>
         ) : (
           <button
-            className="video-skip"
+            className="vid-skip"
             onClick={(e) => {
               dismiss(4, e)
               hide()

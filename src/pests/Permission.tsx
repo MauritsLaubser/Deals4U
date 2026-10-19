@@ -59,11 +59,11 @@ export function Notifications() {
           </div>
         </div>
       )}
-      <div className="toasts">
+      <div className="pings">
         {toasts.map((toast) => (
-          <div key={toast.id} className="toast">
+          <div key={toast.id} className="ping">
             <div>
-              <div className="toast-from">deals4u.biz</div>
+              <div className="ping-from">deals4u.biz</div>
               {toast.text}
             </div>
             <button

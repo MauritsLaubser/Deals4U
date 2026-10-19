@@ -51,10 +51,14 @@ export function Chatbot() {
   }
 
   return (
-    <div className="chatbot">
+    <div className="botty">
       {open && (
-        <div className="chat-window" role="dialog" aria-label="Chat with Botty">
-          <div className="chat-header">
+        <div
+          className="botty-window"
+          role="dialog"
+          aria-label="Chat with Botty"
+        >
+          <div className="botty-header">
             <span>🤖 Botty · online (always)</span>
             <button
               aria-label="Close chat"
@@ -66,22 +70,22 @@ export function Chatbot() {
               ✕
             </button>
           </div>
-          <div className="chat-messages">
+          <div className="botty-messages">
             {messages.map((m, i) => (
-              <div key={i} className={`chat-msg ${m.from}`}>
+              <div key={i} className={`botty-msg ${m.from}`}>
                 {m.text}
               </div>
             ))}
-            {typing && <div className="chat-msg bot typing">• • •</div>}
+            {typing && <div className="botty-msg bot typing">• • •</div>}
           </div>
-          <div className="chat-actions">
+          <div className="botty-actions">
             <button onClick={() => answer('Yes please')}>Yes please</button>
             <button onClick={() => answer('No. Go away.')}>No. Go away.</button>
           </div>
         </div>
       )}
-      <div className="chat-bubble" aria-hidden>
-        🤖{!open && <span className="chat-badge">1</span>}
+      <div className="botty-bubble" aria-hidden>
+        🤖{!open && <span className="botty-badge">1</span>}
       </div>
     </div>
   )

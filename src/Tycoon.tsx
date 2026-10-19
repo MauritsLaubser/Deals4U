@@ -56,7 +56,7 @@ function Sponsor() {
 
   return (
     <button
-      className="sponsor"
+      className="golden-deal"
       style={{ left: `${spot.x}%`, top: `${spot.y}%` }}
       onClick={(e) => {
         dispatch({ type: 'sponsorBoost' })
@@ -216,7 +216,7 @@ function WinModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="modal-backdrop clean">
       <div className="modal win" role="dialog" aria-label="You won">
-        <div className="newsletter-emoji">🏆</div>
+        <div className="big-emoji">🏆</div>
         <h2>Most Annoying Website on the Internet</h2>
         <p>
           Your site has cookie banners, newsletter modals, autoplay videos, a

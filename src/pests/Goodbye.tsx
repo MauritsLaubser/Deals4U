@@ -38,7 +38,7 @@ export function ExitIntent() {
       <div className="modal exit-intent" role="dialog" aria-label="Don't leave">
         {stage === 'ask' ? (
           <>
-            <div className="newsletter-emoji">🥺</div>
+            <div className="big-emoji">🥺</div>
             <h2>WAIT!!! DON'T GO!!!</h2>
             <p>
               Before you leave, here's an exclusive <strong>5% OFF</strong>{' '}
@@ -53,7 +53,7 @@ export function ExitIntent() {
           </>
         ) : (
           <>
-            <div className="newsletter-emoji">🔒</div>
+            <div className="big-emoji">🔒</div>
             <h2>You can't leave.</h2>
             <p>
               You still haven't played the free game at the bottom of the page!

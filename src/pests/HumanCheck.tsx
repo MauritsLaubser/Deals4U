@@ -68,7 +68,7 @@ export function Captcha() {
   return (
     <div className="modal-backdrop">
       <div
-        className="modal captcha"
+        className="modal humancheck"
         role="dialog"
         aria-label="Verify you are human"
       >
@@ -76,19 +76,19 @@ export function Captcha() {
           <>
             <h2>Hold on! Are you human?</h2>
             <p>We detected suspiciously human-like behaviour.</p>
-            <label className="captcha-check">
+            <label className="humancheck-check">
               <input type="checkbox" onChange={() => setChecked(true)} />
               I'm not a robot
-              <span className="captcha-logo">♻️ reCRAPTCHA</span>
+              <span className="humancheck-logo">♻️ reCRAPTCHA</span>
             </label>
           </>
         ) : (
           <>
-            <div className="captcha-head">
+            <div className="humancheck-head">
               Select all squares with
               <strong>{puzzle.target.name}</strong>
             </div>
-            <div className="captcha-grid">
+            <div className="humancheck-grid">
               {puzzle.tiles.map((tile, i) => (
                 <button
                   key={i}
@@ -99,8 +99,8 @@ export function Captcha() {
                 </button>
               ))}
             </div>
-            {error && <div className="captcha-error">{error}</div>}
-            <button className="captcha-verify" onClick={verify}>
+            {error && <div className="humancheck-error">{error}</div>}
+            <button className="humancheck-verify" onClick={verify}>
               VERIFY
             </button>
           </>
